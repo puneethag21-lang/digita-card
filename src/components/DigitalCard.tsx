@@ -98,29 +98,22 @@ export const DigitalCard: React.FC<DigitalCardProps> = ({
           </button>
         </header>
 
-        {/* Service Label */}
-        <div className="absolute top-[134px] left-[14px] z-10 flex items-center gap-[7px] h-[31px] text-white text-[10.5px] font-medium tracking-wider whitespace-nowrap">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={asset('0a3da.svg')} alt="" className="w-[30px] h-[31px]" />
+        {/* Service Label with Horizontal Flank Lines */}
+        <div className="absolute top-[134px] left-[14px] z-10 flex items-center gap-[8px] h-[31px] text-[#8E929A] text-[10.5px] font-medium tracking-[0.16em] uppercase whitespace-nowrap">
+          <div className="w-[30px] h-[1px] bg-[#5A5D66]" />
           <span>{t.category}</span>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={asset('a20c6.svg')} alt="" className="w-[24px]" />
+          <div className="w-[24px] h-[1px] bg-[#5A5D66]" />
         </div>
 
         {/* Title Rule */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          className="absolute top-[171px] left-[15px] z-10 w-[103px]"
-          src={asset('44aad.svg')}
-          alt=""
-        />
+        <div className="absolute top-[168px] left-[15px] z-10 w-[103px] h-[1px] bg-[#3E4148]" />
 
-        {/* Driver Name & Tagline */}
+        {/* Driver Name & Tagline (Regular font weight - not bold) */}
         <div className="absolute top-[191px] left-[15px] z-20">
-          <h1 className="text-[34px] font-bold text-white leading-none">
+          <h1 className="text-[35px] font-normal text-white leading-none tracking-normal">
             {t.driver.name}
           </h1>
-          <p className="mt-[2px] text-[#a1a1aa] text-[13px] leading-snug">
+          <p className="mt-[3px] text-[#a1a1aa] text-[13px] font-normal leading-snug">
             {t.driver.tagline1}
             <br />
             {t.driver.tagline2}
@@ -184,7 +177,7 @@ export const DigitalCard: React.FC<DigitalCardProps> = ({
               <strong className="text-[16px] font-bold leading-tight">
                 {t.actions.callTitle}
               </strong>
-              <small className="text-[19px] font-black leading-tight tracking-wide">
+              <small className="text-[20px] font-normal leading-tight tracking-normal">
                 {CONTACT_INFO.phone}
               </small>
             </span>
