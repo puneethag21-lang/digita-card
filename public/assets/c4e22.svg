@@ -1,0 +1,15 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="17.5891" height="18.5663" viewBox="0 0 17.5891 18.5663" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="taxi">
+<path id="roof-sign" d="M5.86303 3.90869V0.977171H11.7261V3.90869" stroke-width="1.95434" stroke-linecap="round" stroke-linejoin="round" stroke="white"/>
+<path id="car-body" d="M5.37444 3.90869H12.2146C12.6292 3.91032 13.0325 4.04374 13.3663 4.28966C13.7 4.53558 13.9469 4.88126 14.0713 5.27673L16.6119 10.7489V13.6804C16.6119 14.1987 16.406 14.6958 16.0395 15.0623C15.673 15.4288 15.1759 15.6347 14.6576 15.6347H2.93151C2.41319 15.6347 1.9161 15.4288 1.54959 15.0623C1.18307 14.6958 0.977171 14.1987 0.977171 13.6804V10.7489L3.51782 5.27673C3.64218 4.88126 3.88908 4.53558 4.22283 4.28966C4.55658 4.04374 4.95988 3.91032 5.37444 3.90869Z" stroke-width="1.95434" stroke-linecap="round" stroke-linejoin="round" stroke="white"/>
+<path id="windshield" d="M1.95434 8.79454H15.6347" stroke-width="1.95434" stroke-linecap="round" stroke-linejoin="round" stroke="white"/>
+<g id="headlights">
+<path id="Vector" d="M3.90869 12.2146H4.88586" stroke-width="1.95434" stroke-linecap="round" stroke-linejoin="round" stroke="white"/>
+<path id="Vector_2" d="M12.7032 12.2146H13.6804" stroke-width="1.95434" stroke-linecap="round" stroke-linejoin="round" stroke="white"/>
+</g>
+<g id="wheels">
+<path id="Vector_3" d="M2.93151 15.6347V17.5891" stroke-width="1.95434" stroke-linecap="round" stroke-linejoin="round" stroke="white"/>
+<path id="Vector_4" d="M14.6576 15.6347V17.5891" stroke-width="1.95434" stroke-linecap="round" stroke-linejoin="round" stroke="white"/>
+</g>
+</g>
+</svg>
