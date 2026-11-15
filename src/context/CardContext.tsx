@@ -70,16 +70,29 @@ export const CardProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Load from localStorage on mount (real data only)
   useEffect(() => {
     try {
-      const savedProfile = localStorage.getItem('zeo_driver_profile');
-      if (savedProfile) setProfile(JSON.parse(savedProfile));
+      if (typeof window !== 'undefined') {
+        const savedProfile = localStorage.getItem('zeo_driver_profile');
+        if (savedProfile) {
+          try {
+            setProfile(JSON.parse(savedProfile));
+          } catch {}
+        }
 
-      const savedBookings = localStorage.getItem('zeo_driver_bookings');
-      if (savedBookings) {
-        setBookings(JSON.parse(savedBookings));
+        const savedBookings = localStorage.getItem('zeo_driver_bookings');
+        if (savedBookings) {
+          try {
+            const parsed = JSON.parse(savedBookings);
+            if (Array.isArray(parsed)) setBookings(parsed);
+          } catch {}
+        }
+
+        const savedStats = localStorage.getItem('zeo_driver_stats');
+        if (savedStats) {
+          try {
+            setStats(JSON.parse(savedStats));
+          } catch {}
+        }
       }
-
-      const savedStats = localStorage.getItem('zeo_driver_stats');
-      if (savedStats) setStats(JSON.parse(savedStats));
     } catch {
       // Local storage unavailable
     }
@@ -162,10 +175,10 @@ export const CardProvider: React.FC<{ children: React.ReactNode }> = ({ children
         routes,
         stats: {
           ...stats,
-          totalBookings: bookings.length,
-          pendingCount: bookings.filter((b) => b.status === 'pending').length,
-          confirmedCount: bookings.filter((b) => b.status === 'confirmed').length,
-          completedCount: bookings.filter((b) => b.status === 'completed').length,
+          totalBookings: Array.isArray(bookings) ? bookings.length : 0,
+          pendingCount: Array.isArray(bookings) ? bookings.filter((b) => b?.status === 'pending').length : 0,
+          confirmedCount: Array.isArray(bookings) ? bookings.filter((b) => b?.status === 'confirmed').length : 0,
+          completedCount: Array.isArray(bookings) ? bookings.filter((b) => b?.status === 'completed').length : 0,
         },
         trackClick,
       }}
