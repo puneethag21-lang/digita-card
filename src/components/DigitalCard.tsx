@@ -108,12 +108,27 @@ export const DigitalCard: React.FC<DigitalCardProps> = ({
         {/* Title Rule */}
         <div className="absolute top-[168px] left-[15px] z-10 w-[103px] h-[1px] bg-[#3E4148]" />
 
-        {/* Driver Name & Tagline (Regular font weight - not bold) */}
-        <div className="absolute top-[191px] left-[15px] z-20">
-          <h1 className="text-[35px] font-normal text-white leading-none tracking-normal">
+        {/* Driver Profile DP + Name & Tagline */}
+        <div className="absolute top-[180px] left-[15px] z-20 flex flex-col items-start">
+          {/* Owner Display Picture (Small Rounded DP) */}
+          <div className="relative w-[48px] h-[48px] rounded-full ring-2 ring-[#FFC107] ring-offset-2 ring-offset-black overflow-hidden shadow-[0_4px_16px_rgba(0,0,0,0.8)] mb-2">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/driver-photo.jpg"
+              alt="Ganapathi - Auto Owner & Driver"
+              className="w-full h-full object-cover object-[center_18%]"
+            />
+            {/* Active Driver Status Indicator */}
+            <span
+              className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-black rounded-full"
+              title="Verified Driver"
+            />
+          </div>
+
+          <h1 className="text-[32px] font-normal text-white leading-none tracking-normal">
             {t.driver.name}
           </h1>
-          <p className="mt-[3px] text-[#a1a1aa] text-[13px] font-normal leading-snug">
+          <p className="mt-[4px] text-[#a1a1aa] text-[12.5px] font-normal leading-snug">
             {t.driver.tagline1}
             <br />
             {t.driver.tagline2}
