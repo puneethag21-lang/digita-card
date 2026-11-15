@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   authors: [{ name: 'Ganapathi' }],
   openGraph: {
     title: 'Ganapathi - Auto Rickshaw Services | ZEO Cards',
-    description: 'Reliable rides across Kundapura-Udupi. Call 9535129792 or chat on WhatsApp.',
+    description: 'Reliable rides across Kundapura-Udupi. Call 8431632763 or chat on WhatsApp.',
     type: 'website',
   },
 };

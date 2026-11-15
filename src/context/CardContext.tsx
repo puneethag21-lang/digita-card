@@ -6,8 +6,8 @@ import { RideBooking, DriverProfile, RoutePricing } from '../types/admin';
 const DEFAULT_PROFILE: DriverProfile = {
   name: 'Ganapathi',
   nameKn: 'ಗಣಪತಿ',
-  phone: '9535129792',
-  alternatePhone: '9535129792',
+  phone: '8431632763',
+  alternatePhone: '8431632763',
   location: 'Goliyangadi, Kundapura',
   locationKn: 'ಗೋಳಿಯಂಗಡಿ, ಕುಂದಾಪುರ',
   routeScope: 'Local & Outstation Rides',
@@ -74,7 +74,10 @@ export const CardProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const savedProfile = localStorage.getItem('zeo_driver_profile');
         if (savedProfile) {
           try {
-            setProfile(JSON.parse(savedProfile));
+            const parsed = JSON.parse(savedProfile);
+            if (parsed.phone === '9535129792') parsed.phone = '8431632763';
+            if (parsed.alternatePhone === '9535129792') parsed.alternatePhone = '8431632763';
+            setProfile(parsed);
           } catch {}
         }
 

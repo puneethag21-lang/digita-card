@@ -19,8 +19,8 @@ A responsive, high-performance Digital Business Card website built with **Next.j
    - Includes custom asset fallbacks and theme overlay options.
 
 3. **Fully Working Actions**:
-   - 📞 **Call Now**: Initiates one-tap phone call to `9535129792` (`tel:+919535129792`).
-   - 💬 **WhatsApp**: Launches WhatsApp chat (`https://wa.me/919535129792`) with a pre-filled professional booking message.
+   - 📞 **Call Now**: Initiates one-tap phone call to `8431632763` (`tel:+918431632763`).
+   - 💬 **WhatsApp**: Launches WhatsApp chat (`https://wa.me/918431632763`) with a pre-filled professional booking message.
    - 📇 **Save Contact**: Automatically compiles and downloads `Ganapathi_Auto_Kundapura.vcf` (vCard 3.0) for instant addition to iOS/Android address books.
    - 🔗 **Share Card**: Uses native device Web Share API (`navigator.share`) with fallback clipboard copying, custom QR code, and WhatsApp share sheet.
    - 📍 **Get Direction**: Opens turn-by-turn navigation on Google Maps to Goliyangadi, Kundapura.
