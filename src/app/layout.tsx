@@ -1,10 +1,11 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
+import { CardProvider } from '@/context/CardContext';
 
 export const metadata: Metadata = {
   title: 'Ganapathi - Auto Rickshaw Services | ZEO Cards',
-  description: 'Digital Business Card for Ganapathi Auto Rickshaw Services across Kundapura-Udupi. Book rides, call, WhatsApp, or get directions instantly.',
-  keywords: ['Ganapathi Auto', 'Kundapura Auto', 'Udupi Auto Rickshaw', 'ZEO Cards', 'Goliyangadi Auto Stand', 'Local Outstation Rides'],
+  description: 'Digital Business Card and Management System for Ganapathi Auto Rickshaw Services across Kundapura-Udupi.',
+  keywords: ['Ganapathi Auto', 'Kundapura Auto', 'Udupi Auto Rickshaw', 'ZEO Cards', 'Goliyangadi Auto Stand'],
   authors: [{ name: 'Ganapathi' }],
   openGraph: {
     title: 'Ganapathi - Auto Rickshaw Services | ZEO Cards',
@@ -29,7 +30,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="min-h-screen bg-[#070708] text-white flex flex-col items-center justify-center antialiased selection:bg-[#FFC107] selection:text-black">
-        {children}
+        <CardProvider>
+          {children}
+        </CardProvider>
       </body>
     </html>
   );

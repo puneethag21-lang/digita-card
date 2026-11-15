@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Translations, Language } from '../types';
-import { CONTACT_INFO } from '../constants/translations';
+import { useCard } from '../context/CardContext';
 import {
   X,
   MapPin,
@@ -14,6 +14,7 @@ import {
   MessageSquare,
   Phone,
   CheckCircle2,
+  User,
 } from 'lucide-react';
 
 interface BookRideModalProps {
@@ -29,6 +30,9 @@ export const BookRideModal: React.FC<BookRideModalProps> = ({
   t,
   currentLang,
 }) => {
+  const { profile, addBooking } = useCard();
+  const [customerName, setCustomerName] = useState('');
+  const [customerPhone, setCustomerPhone] = useState('');
   const [pickup, setPickup] = useState('');
   const [destination, setDestination] = useState('');
   const [date, setDate] = useState(() => {
@@ -41,7 +45,7 @@ export const BookRideModal: React.FC<BookRideModalProps> = ({
     return d.toTimeString().slice(0, 5);
   });
   const [passengers, setPassengers] = useState<number>(1);
-  const [rideType, setRideType] = useState<string>('local');
+  const [rideType, setRideType] = useState<'local' | 'outstation' | 'urgent' | 'station'>('local');
   const [notes, setNotes] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
@@ -54,6 +58,20 @@ export const BookRideModal: React.FC<BookRideModalProps> = ({
       return;
     }
 
+    // Save to Admin Panel Bookings Database!
+    addBooking({
+      customerName: customerName.trim() || (currentLang === 'kn' ? 'ಪ್ರಯಾಣಿಕರು' : 'Passenger'),
+      phone: customerPhone.trim() || 'WhatsApp Enquiry',
+      pickup: pickup.trim(),
+      destination: destination.trim(),
+      date,
+      time,
+      passengers,
+      rideType,
+      status: 'pending',
+      notes: notes.trim(),
+    });
+
     const rideTypeLabel =
       rideType === 'local'
         ? t.bookingModal.rideTypes.local
@@ -65,15 +83,15 @@ export const BookRideModal: React.FC<BookRideModalProps> = ({
 
     const message =
       currentLang === 'kn'
-        ? `ನಮಸ್ಕಾರ ಗಣಪತಿ ಅವರೇ,\nನನಗೆ ಆಟೋ ರೈಡ್ ಬೇಕಾಗಿದೆ:\n📍 ಪಿಕಪ್: ${pickup}\n🏁 ತಲುಪುವ ಸ್ಥಳ: ${destination}\n📅 ದಿನಾಂಕ: ${date}\n⏰ ಸಮಯ: ${time}\n👥 ಪ್ರಯಾಣಿಕರು: ${passengers}\n🏷️ ವಿಧ: ${rideTypeLabel}${
+        ? `ನಮಸ್ಕಾರ ${profile.nameKn} ಅವರೇ,\nನನಗೆ ಆಟೋ ರೈಡ್ ಬುಕಿಂಗ್ ಬೇಕಾಗಿದೆ:\n👤 ಹೆಸರು: ${customerName || 'ಪ್ರಯಾಣಿಕರು'}\n📍 ಪಿಕಪ್: ${pickup}\n🏁 ತಲುಪುವ ಸ್ಥಳ: ${destination}\n📅 ದಿನಾಂಕ: ${date}\n⏰ ಸಮಯ: ${time}\n👥 ಪ್ರಯಾಣಿಕರು: ${passengers}\n🏷️ ವಿಧ: ${rideTypeLabel}${
             notes ? `\n📝 ಟಿಪ್ಪಣಿ: ${notes}` : ''
           }\n\nದಯವಿಟ್ಟು ದೃಢೀಕರಿಸಿ.`
-        : `Hello Ganapathi,\nI would like to book an auto ride:\n📍 Pickup: ${pickup}\n🏁 Destination: ${destination}\n📅 Date: ${date}\n⏰ Time: ${time}\n👥 Passengers: ${passengers}\n🏷️ Type: ${rideTypeLabel}${
+        : `Hello ${profile.name},\nI would like to book an auto ride:\n👤 Name: ${customerName || 'Passenger'}\n📍 Pickup: ${pickup}\n🏁 Destination: ${destination}\n📅 Date: ${date}\n⏰ Time: ${time}\n👥 Passengers: ${passengers}\n🏷️ Type: ${rideTypeLabel}${
             notes ? `\n📝 Notes: ${notes}` : ''
           }\n\nPlease confirm availability. Thank you!`;
 
     const encoded = encodeURIComponent(message);
-    const whatsappUrl = `https://wa.me/${CONTACT_INFO.phoneInternational}?text=${encoded}`;
+    const whatsappUrl = `https://wa.me/91${profile.phone}?text=${encoded}`;
 
     setSubmitted(true);
     setTimeout(() => {
@@ -84,25 +102,27 @@ export const BookRideModal: React.FC<BookRideModalProps> = ({
   };
 
   const handleCall = () => {
-    window.location.href = `tel:${CONTACT_INFO.phone}`;
+    window.location.href = `tel:+91${profile.phone}`;
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm animate-fadeIn">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/85 backdrop-blur-sm animate-fadeIn">
       {/* Modal Dialog */}
       <div
-        className="w-full max-w-lg bg-[#141416] border border-[#2B2B32] rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden max-h-[92vh] flex flex-col animate-slideUp"
+        className="w-full max-w-lg bg-[#141417] border border-[#2B2B32] rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden max-h-[92vh] flex flex-col animate-slideUp"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#24242A] bg-[#18181C]">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#24242A] bg-[#18181D]">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-[#FFC107]/15 flex items-center justify-center text-[#FFC107]">
               <Car className="w-5 h-5" />
             </div>
             <div>
               <h3 className="text-base font-bold text-white">{t.bookingModal.title}</h3>
-              <p className="text-xs text-gray-400">{t.bookingModal.subtitle}</p>
+              <p className="text-xs text-gray-400">
+                {currentLang === 'kn' ? `ನೇರ ಬುಕಿಂಗ್ • ${profile.nameKn}` : `Direct booking with ${profile.name}`}
+              </p>
             </div>
           </div>
           <button
@@ -116,7 +136,37 @@ export const BookRideModal: React.FC<BookRideModalProps> = ({
         </div>
 
         {/* Form Body */}
-        <form onSubmit={handleWhatsAppBooking} className="p-6 space-y-4 overflow-y-auto">
+        <form onSubmit={handleWhatsAppBooking} className="p-6 space-y-4 overflow-y-auto text-white">
+          {/* Customer Name & Phone */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs font-semibold text-gray-300 mb-1 flex items-center gap-1.5">
+                <User className="w-3.5 h-3.5 text-[#FFC107]" />
+                {currentLang === 'kn' ? 'ನಿಮ್ಮ ಹೆಸರು (ಐಚ್ಛಿಕ)' : 'Your Name (Optional)'}
+              </label>
+              <input
+                type="text"
+                value={customerName}
+                onChange={(e) => setCustomerName(e.target.value)}
+                placeholder={currentLang === 'kn' ? 'ಹೆಸರು ನಮೂದಿಸಿ' : 'Enter your name'}
+                className="w-full px-3.5 py-2.5 rounded-xl bg-[#1C1C22] border border-[#2F2F38] text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#FFC107] transition-colors"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-gray-300 mb-1 flex items-center gap-1.5">
+                <Phone className="w-3.5 h-3.5 text-[#FFC107]" />
+                {currentLang === 'kn' ? 'ಫೋನ್ ನಂಬರ್ (ಐಚ್ಛಿಕ)' : 'Contact Number'}
+              </label>
+              <input
+                type="tel"
+                value={customerPhone}
+                onChange={(e) => setCustomerPhone(e.target.value)}
+                placeholder="9876543210"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-[#1C1C22] border border-[#2F2F38] text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#FFC107] transition-colors"
+              />
+            </div>
+          </div>
+
           {/* Pickup Input */}
           <div>
             <label className="block text-xs font-semibold uppercase tracking-wider text-gray-300 mb-1.5 flex items-center gap-1.5">
@@ -211,7 +261,7 @@ export const BookRideModal: React.FC<BookRideModalProps> = ({
               </label>
               <select
                 value={rideType}
-                onChange={(e) => setRideType(e.target.value)}
+                onChange={(e) => setRideType(e.target.value as any)}
                 className="w-full px-3 py-2 rounded-xl bg-[#1C1C22] border border-[#2F2F38] text-xs text-white focus:outline-none focus:border-[#FFC107] transition-colors"
               >
                 <option value="local">{t.bookingModal.rideTypes.local}</option>
@@ -254,7 +304,7 @@ export const BookRideModal: React.FC<BookRideModalProps> = ({
               {submitted ? (
                 <>
                   <CheckCircle2 className="w-5 h-5 animate-pulse" />
-                  <span>{currentLang === 'kn' ? 'ತೆರೆಯಲಾಗುತ್ತಿದೆ...' : 'Opening WhatsApp...'}</span>
+                  <span>{currentLang === 'kn' ? 'ಬುಕಿಂಗ್ ದಾಖಲಾಗಿದೆ...' : 'Booking Sent to Admin & WhatsApp...'}</span>
                 </>
               ) : (
                 <>

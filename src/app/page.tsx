@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { DigitalCard } from '@/components/DigitalCard';
-import { Smartphone, Monitor, Sparkles, QrCode } from 'lucide-react';
+import { Smartphone, Monitor, Sparkles, Sliders } from 'lucide-react';
 
 export default function Home() {
   const [viewMode, setViewMode] = useState<'card' | 'compare'>('card');
@@ -25,6 +26,15 @@ export default function Home() {
         </div>
 
         <div className="flex items-center gap-2">
+          {/* Admin Panel Link */}
+          <Link
+            href="/admin"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#1C1E24] hover:bg-[#252830] text-gray-300 hover:text-white border border-[#2B2D36] text-xs font-semibold transition-colors"
+          >
+            <Sliders className="w-3.5 h-3.5 text-[#FFC107]" />
+            <span>Admin Panel</span>
+          </Link>
+
           {/* Side-by-side comparison on desktop */}
           <button
             type="button"
