@@ -85,14 +85,6 @@ export default function Home() {
           </div>
         </div>
       )}
-
-      {/* Footer Info */}
-      <footer className="mt-8 text-center text-xs text-gray-500 space-y-1 select-none">
-        <p>Built with Next.js, React, TypeScript, Tailwind CSS & Figma Assets</p>
-        <p className="text-[11px] text-gray-600">
-          ZEO Cards • Responsive Digital Business Card Platform
-        </p>
-      </footer>
     </main>
   );
 }

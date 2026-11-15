@@ -1,14 +1,12 @@
 'use client';
 
 import React, { useState } from 'react';
-import Link from 'next/link';
 import { Language } from '../types';
 import { TRANSLATIONS } from '../constants/translations';
 import { BookRideModal } from './BookRideModal';
 import { ShareCardModal } from './ShareCardModal';
 import { downloadVCard } from '../utils/vcard';
 import { useCard } from '../context/CardContext';
-import { Lock, ShieldCheck } from 'lucide-react';
 
 interface DigitalCardProps {
   initialLanguage?: Language;
@@ -355,31 +353,6 @@ export const DigitalCard: React.FC<DigitalCardProps> = ({
               {t.actions.getDirection}
             </small>
           </a>
-        </div>
-
-        {/* Discreet Driver Status & Admin Link Footer */}
-        <div className="pt-2 flex items-center justify-between text-[11px] text-gray-400 border-t border-[#1C1D24]">
-          <div className="flex items-center gap-1.5">
-            <span
-              className={`w-2 h-2 rounded-full ${
-                profile.isAvailable ? 'bg-emerald-400 animate-pulse' : 'bg-rose-400'
-              }`}
-            />
-            <span className="text-gray-300">
-              {profile.isAvailable
-                ? language === 'kn' ? 'ರೈಡ್‌ಗೆ ಲಭ್ಯವಿದೆ' : 'Available for Rides'
-                : language === 'kn' ? 'ಪ್ರಸ್ತುತ ಕಾರ್ಯನಿರತ' : 'Currently on Ride'}
-            </span>
-          </div>
-
-          <Link
-            href="/admin"
-            className="flex items-center gap-1 text-gray-500 hover:text-[#FFC107] transition-colors p-1 rounded-md"
-            title="Owner Admin Panel"
-          >
-            <Lock className="w-3 h-3" />
-            <span className="text-[10px]">Owner Panel</span>
-          </Link>
         </div>
       </section>
 
