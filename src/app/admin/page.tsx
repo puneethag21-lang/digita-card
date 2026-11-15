@@ -4,6 +4,8 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useCard } from '@/context/CardContext';
 import { RideBooking } from '@/types/admin';
+import { Language } from '@/types';
+import { ADMIN_TRANSLATIONS } from '@/constants/adminTranslations';
 import {
   Car,
   Phone,
@@ -12,23 +14,17 @@ import {
   Calendar,
   Clock,
   Users,
-  CheckCircle2,
   Clock3,
-  XCircle,
   Plus,
   ArrowLeft,
   ExternalLink,
-  Shield,
-  KeyRound,
-  TrendingUp,
   Sliders,
   QrCode,
   Printer,
   Copy,
   Check,
   Trash2,
-  AlertCircle,
-  Eye,
+  Globe,
 } from 'lucide-react';
 
 export default function AdminPage() {
@@ -43,12 +39,12 @@ export default function AdminPage() {
     stats,
   } = useCard();
 
+  const [lang, setLang] = useState<Language>('en');
   const [activeTab, setActiveTab] = useState<'bookings' | 'settings' | 'routes' | 'qr'>('bookings');
   const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'confirmed' | 'completed'>('all');
-  const [isAuthenticated, setIsAuthenticated] = useState(true); // default true for convenience
-  const [pinInput, setPinInput] = useState('');
-  const [pinError, setPinError] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const t = ADMIN_TRANSLATIONS[lang];
 
   // Profile Edit State
   const [driverName, setDriverName] = useState(profile.name);
@@ -83,25 +79,25 @@ export default function AdminPage() {
       vehicleNumber,
       isAvailable,
     });
-    showToast('Profile and Card Settings Updated Successfully!');
+    showToast(t.settings.savedToast);
   };
 
   const handleToggleAvailability = () => {
     const nextState = !profile.isAvailable;
     updateProfile({ isAvailable: nextState });
     setIsAvailable(nextState);
-    showToast(nextState ? 'Status: Available for Rides 🟢' : 'Status: Busy / Off-Duty 🔴');
+    showToast(nextState ? t.settings.statusAvailable : t.settings.statusOffDuty);
   };
 
   const handleManualAddBooking = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newPickup || !newDest) {
-      alert('Please fill pickup and destination');
+      alert(lang === 'kn' ? 'ದಯವಿಟ್ಟು ಪಿಕಪ್ ಮತ್ತು ತಲುಪುವ ಸ್ಥಳವನ್ನು ನಮೂದಿಸಿ' : 'Please fill pickup and destination');
       return;
     }
     addBooking({
-      customerName: newCustName || 'Direct Booking',
-      phone: newCustPhone || 'Walk-in / Phone',
+      customerName: newCustName || (lang === 'kn' ? 'ನೇರ ಗ್ರಾಹಕರು' : 'Direct Customer'),
+      phone: newCustPhone || (lang === 'kn' ? 'ಫೋನ್ ಕರೆ' : 'Phone Call'),
       pickup: newPickup,
       destination: newDest,
       date: newDate,
@@ -117,11 +113,15 @@ export default function AdminPage() {
     setNewPickup('');
     setNewDest('');
     setNewFare('');
-    showToast('New Booking added to schedule!');
+    showToast(lang === 'kn' ? 'ಹೊಸ ರೈಡ್ ವೇಳಾಪಟ್ಟಿಗೆ ಸೇರಿಸಲಾಗಿದೆ!' : 'New Ride added to schedule!');
   };
 
   const handleWhatsAppConfirm = (booking: RideBooking) => {
-    const text = `Hello ${booking.customerName},\nYour auto ride booking with Ganapathi Auto Kundapura has been CONFIRMED!\n\n📍 Pickup: ${booking.pickup}\n🏁 Destination: ${booking.destination}\n📅 Date: ${booking.date} at ${booking.time}\n🚖 Vehicle: ${profile.vehicleNumber} (TVS Duramax)\n📞 Driver Phone: ${profile.phone}\n\nSee you at the scheduled time!`;
+    const text =
+      lang === 'kn'
+        ? `ನಮಸ್ಕಾರ ${booking.customerName},\nಗಣಪತಿ ಆಟೋ ಕುಂದಾಪುರ ಜೊತೆಗಿನ ನಿಮ್ಮ ರೈಡ್ ದೃಢೀಕರಿಸಲಾಗಿದೆ!\n\n📍 ಪಿಕಪ್: ${booking.pickup}\n🏁 ತಲುಪುವ ಸ್ಥಳ: ${booking.destination}\n📅 ದಿನಾಂಕ: ${booking.date} (${booking.time})\n🚖 ವಾಹನ: ${profile.vehicleNumber} (ಟಿವಿಎಸ್ ಡ್ಯೂರಾಮ್ಯಾಕ್ಸ್)\n📞 ಚಾಲಕರ ಮೊಬೈಲ್: ${profile.phone}\n\nಧನ್ಯವಾದಗಳು!`
+        : `Hello ${booking.customerName},\nYour auto ride with Ganapathi Auto Kundapura has been CONFIRMED!\n\n📍 Pickup: ${booking.pickup}\n🏁 Destination: ${booking.destination}\n📅 Date: ${booking.date} at ${booking.time}\n🚖 Vehicle: ${profile.vehicleNumber} (TVS Duramax)\n📞 Driver Phone: ${profile.phone}\n\nThank you!`;
+
     const cleanPhone = booking.phone.replace(/[^0-9]/g, '');
     const target = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone;
     window.open(`https://wa.me/${target}?text=${encodeURIComponent(text)}`, '_blank');
@@ -142,7 +142,7 @@ export default function AdminPage() {
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#1C1E24] hover:bg-[#252830] text-gray-300 hover:text-white text-xs font-semibold border border-[#2D3039] transition-colors"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Public Card</span>
+            <span>{t.nav.publicCard}</span>
           </Link>
 
           <div className="flex items-center gap-2">
@@ -150,13 +150,25 @@ export default function AdminPage() {
               ZE<span className="text-[#FFC107]">O</span> Cards
             </span>
             <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-[#FFC107]/20 text-[#FFC107] border border-[#FFC107]/30">
-              OWNER ADMIN
+              {t.nav.adminBadge}
             </span>
           </div>
         </div>
 
-        {/* Live Availability Toggle Button */}
-        <div className="flex items-center gap-3">
+        {/* Right Action Tools: Language Selector + Availability Toggle + View Live Card */}
+        <div className="flex items-center gap-2.5">
+          {/* Bilingual Language Selector Toggle */}
+          <button
+            type="button"
+            onClick={() => setLang(lang === 'en' ? 'kn' : 'en')}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#1A1A1E] border border-[#2E2E34] text-xs font-semibold text-[#E5E7EB] hover:text-white hover:border-[#FFC107]/50 transition-all active:scale-95 shadow-sm"
+            aria-label="Toggle Language"
+          >
+            <Globe className="w-3.5 h-3.5 text-[#FFC107]" />
+            <span>{lang === 'en' ? 'ಕನ್ನಡ' : 'English'}</span>
+          </button>
+
+          {/* Live Availability Toggle Button */}
           <button
             type="button"
             onClick={handleToggleAvailability}
@@ -171,7 +183,9 @@ export default function AdminPage() {
                 profile.isAvailable ? 'bg-emerald-400 animate-pulse' : 'bg-rose-400'
               }`}
             />
-            <span>{profile.isAvailable ? 'Status: Available' : 'Status: Off-Duty'}</span>
+            <span className="hidden sm:inline">
+              {profile.isAvailable ? t.nav.available : t.nav.offDuty}
+            </span>
           </button>
 
           <Link
@@ -180,14 +194,14 @@ export default function AdminPage() {
             className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#FFC107] text-black text-xs font-bold hover:bg-[#FFD54F] transition-all shadow-md"
           >
             <ExternalLink className="w-3.5 h-3.5" />
-            <span>Open Live Card</span>
+            <span>{t.nav.openLiveCard}</span>
           </Link>
         </div>
       </header>
 
       {/* Main Content Area */}
       <main className="flex-1 w-full max-w-6xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
-        {/* Driver Welcome Banner & Vehicle Summary */}
+        {/* Driver Welcome Banner */}
         <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#18191E] via-[#1E2028] to-[#18191E] border border-[#2B2D38] p-5 sm:p-6 shadow-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <div className="relative w-14 h-14 rounded-full ring-2 ring-[#FFC107] ring-offset-2 ring-offset-black overflow-hidden shadow-lg shrink-0">
@@ -201,14 +215,14 @@ export default function AdminPage() {
             <div>
               <div className="flex items-center gap-2">
                 <h1 className="text-xl font-bold text-white tracking-tight">
-                  {profile.name} ({profile.nameKn})
+                  {lang === 'kn' ? profile.nameKn : profile.name}
                 </h1>
                 <span className="text-xs px-2 py-0.5 rounded bg-amber-500/15 text-[#FFC107] font-semibold border border-[#FFC107]/20">
-                  ★ {profile.rating}
+                  {lang === 'kn' ? 'ದೃಢೀಕೃತ ಚಾಲಕರು' : 'Verified Owner'}
                 </span>
               </div>
               <p className="text-xs text-gray-400 mt-0.5">
-                {profile.vehicleModel} • {profile.vehicleNumber} • {profile.location}
+                {profile.vehicleModel} • {profile.vehicleNumber} • {lang === 'kn' ? profile.locationKn : profile.location}
               </p>
             </div>
           </div>
@@ -220,47 +234,47 @@ export default function AdminPage() {
               className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#FFC107] text-black text-xs font-bold hover:bg-[#FFD54F] active:scale-95 transition-all shadow-lg shadow-[#FFC107]/20"
             >
               <Plus className="w-4 h-4" />
-              <span>Record New Ride</span>
+              <span>{t.bookings.recordNew}</span>
             </button>
           </div>
         </div>
 
-        {/* Analytics & Key Metrics */}
+        {/* Real Analytics & Key Metrics */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
           <div className="rounded-2xl bg-[#131418] border border-[#22242D] p-4 flex flex-col justify-between shadow-md">
             <div className="flex items-center justify-between text-gray-400 text-xs mb-2">
-              <span>Total Bookings</span>
+              <span>{t.metrics.totalBookings}</span>
               <Calendar className="w-4 h-4 text-[#FFC107]" />
             </div>
             <span className="text-2xl font-black text-white">{stats.totalBookings}</span>
-            <span className="text-[11px] text-gray-500 mt-1">Direct from Digital Card</span>
+            <span className="text-[11px] text-gray-500 mt-1">{t.metrics.totalDesc}</span>
           </div>
 
           <div className="rounded-2xl bg-[#131418] border border-[#22242D] p-4 flex flex-col justify-between shadow-md">
             <div className="flex items-center justify-between text-gray-400 text-xs mb-2">
-              <span>Pending Action</span>
+              <span>{t.metrics.pendingAction}</span>
               <Clock3 className="w-4 h-4 text-amber-400" />
             </div>
             <span className="text-2xl font-black text-amber-400">{stats.pendingCount}</span>
-            <span className="text-[11px] text-gray-500 mt-1">Requires confirmation</span>
+            <span className="text-[11px] text-gray-500 mt-1">{t.metrics.pendingDesc}</span>
           </div>
 
           <div className="rounded-2xl bg-[#131418] border border-[#22242D] p-4 flex flex-col justify-between shadow-md">
             <div className="flex items-center justify-between text-gray-400 text-xs mb-2">
-              <span>Direct Calls</span>
+              <span>{t.metrics.directCalls}</span>
               <Phone className="w-4 h-4 text-emerald-400" />
             </div>
             <span className="text-2xl font-black text-white">{stats.callClicks}</span>
-            <span className="text-[11px] text-gray-500 mt-1">Customer Call Now taps</span>
+            <span className="text-[11px] text-gray-500 mt-1">{t.metrics.callsDesc}</span>
           </div>
 
           <div className="rounded-2xl bg-[#131418] border border-[#22242D] p-4 flex flex-col justify-between shadow-md">
             <div className="flex items-center justify-between text-gray-400 text-xs mb-2">
-              <span>WhatsApp Chats</span>
+              <span>{t.metrics.whatsAppChats}</span>
               <MessageSquare className="w-4 h-4 text-[#25D366]" />
             </div>
             <span className="text-2xl font-black text-white">{stats.whatsappClicks}</span>
-            <span className="text-[11px] text-gray-500 mt-1">Direct WhatsApp chats</span>
+            <span className="text-[11px] text-gray-500 mt-1">{t.metrics.whatsAppDesc}</span>
           </div>
         </div>
 
@@ -276,7 +290,9 @@ export default function AdminPage() {
             }`}
           >
             <Car className="w-4 h-4" />
-            <span>Ride Enquiries ({bookings.length})</span>
+            <span>
+              {t.tabs.bookings} ({bookings.length})
+            </span>
           </button>
 
           <button
@@ -289,7 +305,7 @@ export default function AdminPage() {
             }`}
           >
             <Sliders className="w-4 h-4" />
-            <span>Card & Profile Settings</span>
+            <span>{t.tabs.settings}</span>
           </button>
 
           <button
@@ -302,7 +318,7 @@ export default function AdminPage() {
             }`}
           >
             <MapPin className="w-4 h-4" />
-            <span>Popular Routes & Fares</span>
+            <span>{t.tabs.routes}</span>
           </button>
 
           <button
@@ -315,7 +331,7 @@ export default function AdminPage() {
             }`}
           >
             <QrCode className="w-4 h-4" />
-            <span>Auto Windshield QR Sticker</span>
+            <span>{t.tabs.qr}</span>
           </button>
         </div>
 
@@ -338,23 +354,37 @@ export default function AdminPage() {
                         : 'bg-[#181920] text-gray-400 hover:text-white border border-[#262832]'
                     }`}
                   >
-                    {filter}
+                    {t.bookings.filters[filter]}
                   </button>
                 ))}
               </div>
 
               <span className="text-xs text-gray-500">
-                Showing {filteredBookings.length} bookings
+                {t.bookings.showing} {filteredBookings.length}
               </span>
             </div>
 
-            {/* Bookings List */}
+            {/* Bookings List (Clean State - NO FAKE DATA) */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {filteredBookings.length === 0 ? (
-                <div className="col-span-full py-12 text-center rounded-3xl bg-[#121317] border border-[#21232B] text-gray-500">
-                  <Car className="w-8 h-8 mx-auto mb-2 text-gray-600" />
-                  <p className="text-sm font-semibold">No bookings found in this view.</p>
-                  <p className="text-xs mt-1">Bookings submitted on the digital card will appear here automatically.</p>
+                <div className="col-span-full py-16 px-6 text-center rounded-3xl bg-[#121317] border border-[#21232B] text-gray-400">
+                  <div className="w-14 h-14 mx-auto rounded-2xl bg-[#1A1C24] flex items-center justify-center text-[#FFC107] mb-3 border border-[#2A2D3A]">
+                    <Car className="w-7 h-7" />
+                  </div>
+                  <h3 className="text-base font-bold text-white mb-1">
+                    {t.bookings.noBookingsTitle}
+                  </h3>
+                  <p className="text-xs text-gray-500 max-w-md mx-auto mb-4 leading-relaxed">
+                    {t.bookings.noBookingsDesc}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setShowAddModal(true)}
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#20222B] hover:bg-[#282B36] border border-[#2E313D] text-xs font-bold text-gray-200 hover:text-white transition-colors"
+                  >
+                    <Plus className="w-4 h-4 text-[#FFC107]" />
+                    <span>{t.bookings.recordNew}</span>
+                  </button>
                 </div>
               ) : (
                 filteredBookings.map((booking) => {
@@ -367,7 +397,6 @@ export default function AdminPage() {
                       key={booking.id}
                       className="rounded-3xl bg-[#14151A] border border-[#252834] p-5 flex flex-col justify-between space-y-4 shadow-lg hover:border-[#383B4A] transition-all"
                     >
-                      {/* Booking Top Info */}
                       <div>
                         <div className="flex items-start justify-between gap-2 mb-2">
                           <div>
@@ -408,17 +437,17 @@ export default function AdminPage() {
                         <div className="space-y-1.5 py-2 border-y border-[#1E2028] text-xs">
                           <div className="flex items-center gap-2 text-gray-300">
                             <MapPin className="w-3.5 h-3.5 text-[#FFC107] shrink-0" />
-                            <span className="text-gray-500 font-medium">Pickup:</span>
+                            <span className="text-gray-500 font-medium">{t.bookings.pickup}:</span>
                             <strong className="text-white font-semibold">{booking.pickup}</strong>
                           </div>
                           <div className="flex items-center gap-2 text-gray-300">
                             <Car className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                            <span className="text-gray-500 font-medium">Drop:</span>
+                            <span className="text-gray-500 font-medium">{t.bookings.drop}:</span>
                             <strong className="text-white font-semibold">{booking.destination}</strong>
                           </div>
                         </div>
 
-                        {/* Timing & Notes */}
+                        {/* Timing */}
                         <div className="flex items-center justify-between text-xs text-gray-400 pt-2">
                           <span className="flex items-center gap-1">
                             <Calendar className="w-3.5 h-3.5 text-gray-500" />
@@ -430,7 +459,7 @@ export default function AdminPage() {
                           </span>
                           <span className="flex items-center gap-1">
                             <Users className="w-3.5 h-3.5 text-gray-500" />
-                            {booking.passengers} Pax
+                            {booking.passengers} {t.bookings.pax}
                           </span>
                         </div>
 
@@ -444,24 +473,22 @@ export default function AdminPage() {
                       {/* Action Bar for Ganapathi */}
                       <div className="pt-2 border-t border-[#1E2028] flex flex-wrap items-center justify-between gap-2">
                         <div className="flex items-center gap-1.5">
-                          {/* Call Button */}
                           <a
                             href={`tel:${booking.phone}`}
                             className="p-2 rounded-xl bg-[#20222B] hover:bg-[#282B36] text-white border border-[#2E313D] text-xs flex items-center gap-1.5 transition-colors"
                             title="Call Customer"
                           >
                             <Phone className="w-3.5 h-3.5 text-[#FFC107]" />
-                            <span className="hidden sm:inline">Call</span>
+                            <span className="hidden sm:inline">{t.bookings.callBtn}</span>
                           </a>
 
-                          {/* WhatsApp Confirm */}
                           <button
                             type="button"
                             onClick={() => handleWhatsAppConfirm(booking)}
                             className="px-3 py-2 rounded-xl bg-[#25D366]/15 hover:bg-[#25D366]/25 text-[#25D366] border border-[#25D366]/30 text-xs font-semibold flex items-center gap-1.5 transition-colors"
                           >
                             <MessageSquare className="w-3.5 h-3.5" />
-                            <span>Confirm via WA</span>
+                            <span>{t.bookings.confirmWaBtn}</span>
                           </button>
                         </div>
 
@@ -472,11 +499,11 @@ export default function AdminPage() {
                               type="button"
                               onClick={() => {
                                 updateBookingStatus(booking.id, 'confirmed');
-                                showToast(`Booking #${booking.id} Confirmed!`);
+                                showToast(lang === 'kn' ? 'ಬುಕಿಂಗ್ ದೃಢೀಕರಿಸಲಾಗಿದೆ!' : 'Booking Confirmed!');
                               }}
                               className="px-2.5 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-black text-xs font-bold transition-colors"
                             >
-                              Accept
+                              {t.bookings.acceptBtn}
                             </button>
                           )}
 
@@ -485,20 +512,20 @@ export default function AdminPage() {
                               type="button"
                               onClick={() => {
                                 updateBookingStatus(booking.id, 'completed');
-                                showToast(`Booking #${booking.id} Marked Completed!`);
+                                showToast(lang === 'kn' ? 'ರೈಡ್ ಪೂರ್ಣಗೊಂಡಿದೆ!' : 'Ride Marked Completed!');
                               }}
                               className="px-2.5 py-1.5 rounded-lg bg-blue-500/20 text-blue-400 border border-blue-500/30 hover:bg-blue-500/30 text-xs font-semibold transition-colors"
                             >
-                              Done
+                              {t.bookings.completeBtn}
                             </button>
                           )}
 
                           <button
                             type="button"
                             onClick={() => {
-                              if (confirm('Delete this booking record?')) {
+                              if (confirm(lang === 'kn' ? 'ಈ ಬುಕಿಂಗ್ ಅಳಿಸಬೇಕೆ?' : 'Delete this booking record?')) {
                                 deleteBooking(booking.id);
-                                showToast('Booking deleted');
+                                showToast(lang === 'kn' ? 'ಅಳಿಸಲಾಗಿದೆ' : 'Booking deleted');
                               }
                             }}
                             className="p-1.5 rounded-lg text-gray-500 hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
@@ -526,10 +553,10 @@ export default function AdminPage() {
           >
             <div>
               <h2 className="text-base font-bold text-white tracking-tight">
-                Digital Business Card Information
+                {t.settings.title}
               </h2>
-              <p className="text-xs text-gray-400">
-                Updating these settings live-updates Ganapathi&apos;s digital card for all customers.
+              <p className="text-xs text-gray-400 mt-0.5">
+                {t.settings.subtitle}
               </p>
             </div>
 
@@ -538,7 +565,7 @@ export default function AdminPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-semibold text-gray-300 mb-1">
-                    Driver Name (English)
+                    {t.settings.nameEn}
                   </label>
                   <input
                     type="text"
@@ -550,7 +577,7 @@ export default function AdminPage() {
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-gray-300 mb-1">
-                    Driver Name (Kannada - ಕನ್ನಡ)
+                    {t.settings.nameKn}
                   </label>
                   <input
                     type="text"
@@ -566,7 +593,7 @@ export default function AdminPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-semibold text-gray-300 mb-1">
-                    Primary Mobile (Call & WhatsApp)
+                    {t.settings.phone}
                   </label>
                   <input
                     type="tel"
@@ -578,7 +605,7 @@ export default function AdminPage() {
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-gray-300 mb-1">
-                    Auto Stand Location
+                    {t.settings.location}
                   </label>
                   <input
                     type="text"
@@ -590,10 +617,10 @@ export default function AdminPage() {
                 </div>
               </div>
 
-              {/* Vehicle Number & Model */}
+              {/* Vehicle Number */}
               <div>
                 <label className="block text-xs font-semibold text-gray-300 mb-1">
-                  Auto Rickshaw Registration Number
+                  {t.settings.vehicleNumber}
                 </label>
                 <input
                   type="text"
@@ -606,7 +633,7 @@ export default function AdminPage() {
               {/* Driver Availability */}
               <div className="pt-2">
                 <label className="block text-xs font-semibold text-gray-300 mb-2">
-                  Live Availability Status
+                  {t.settings.liveStatus}
                 </label>
                 <div className="flex items-center gap-3">
                   <button
@@ -618,7 +645,7 @@ export default function AdminPage() {
                         : 'bg-[#181920] text-gray-400 border-[#282A34]'
                     }`}
                   >
-                    🟢 Available for Rides
+                    {t.settings.statusAvailable}
                   </button>
 
                   <button
@@ -630,7 +657,7 @@ export default function AdminPage() {
                         : 'bg-[#181920] text-gray-400 border-[#282A34]'
                     }`}
                   >
-                    🔴 Busy / Off-Duty
+                    {t.settings.statusOffDuty}
                   </button>
                 </div>
               </div>
@@ -641,7 +668,7 @@ export default function AdminPage() {
                 type="submit"
                 className="px-6 py-2.5 rounded-xl bg-[#FFC107] text-black font-bold text-xs hover:bg-[#FFD54F] transition-all shadow-md active:scale-95"
               >
-                Save All Changes
+                {t.settings.saveBtn}
               </button>
             </div>
           </form>
@@ -652,15 +679,13 @@ export default function AdminPage() {
            ========================================= */}
         {activeTab === 'routes' && (
           <div className="space-y-4 max-w-3xl">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-base font-bold text-white tracking-tight">
-                  Standard Route Fares (Kundapura – Udupi)
-                </h2>
-                <p className="text-xs text-gray-400">
-                  Pre-configured estimates to provide instant quotes to customers.
-                </p>
-              </div>
+            <div>
+              <h2 className="text-base font-bold text-white tracking-tight">
+                {t.routes.title}
+              </h2>
+              <p className="text-xs text-gray-400 mt-0.5">
+                {t.routes.subtitle}
+              </p>
             </div>
 
             <div className="rounded-3xl bg-[#131418] border border-[#23252E] overflow-hidden shadow-lg">
@@ -678,13 +703,13 @@ export default function AdminPage() {
                         <div className="text-xs font-bold text-white">
                           {r.from} ➔ {r.to}
                         </div>
-                        <div className="text-[11px] text-gray-500">Approx. {r.approxDistance}</div>
+                        <div className="text-[11px] text-gray-500">{t.routes.approx} {r.approxDistance}</div>
                       </div>
                     </div>
 
                     <div className="text-right">
                       <span className="text-sm font-black text-[#FFC107]">{r.estimatedPrice}</span>
-                      <div className="text-[10px] text-gray-500">Standard auto fare</div>
+                      <div className="text-[10px] text-gray-500">{t.routes.standardFare}</div>
                     </div>
                   </div>
                 ))}
@@ -700,13 +725,13 @@ export default function AdminPage() {
           <div className="max-w-xl mx-auto rounded-3xl bg-[#131418] border border-[#23252E] p-6 text-center space-y-5 shadow-2xl">
             <div>
               <span className="text-[10px] font-bold uppercase tracking-wider text-[#FFC107]">
-                PRINTABLE VEHICLE STICKER
+                {t.qr.badge}
               </span>
               <h2 className="text-lg font-bold text-white mt-1">
-                Auto Windshield & Passenger Seat QR
+                {t.qr.title}
               </h2>
-              <p className="text-xs text-gray-400">
-                Print this QR sticker and place it inside the rickshaw so passengers can scan and save your contact instantly.
+              <p className="text-xs text-gray-400 mt-0.5">
+                {t.qr.desc}
               </p>
             </div>
 
@@ -717,7 +742,7 @@ export default function AdminPage() {
                   ZEO Cards • Auto Services
                 </span>
                 <span className="text-[14px] font-bold text-black block">
-                  {profile.name} ({profile.nameKn})
+                  {lang === 'kn' ? profile.nameKn : profile.name}
                 </span>
                 <span className="text-[10px] text-gray-600 block">{profile.phone}</span>
               </div>
@@ -760,7 +785,7 @@ export default function AdminPage() {
               </div>
 
               <div className="pt-1 text-[11px] font-semibold text-gray-800">
-                Scan to Call or Book Rides
+                {t.qr.scanText}
               </div>
             </div>
 
@@ -771,19 +796,19 @@ export default function AdminPage() {
                 className="px-4 py-2.5 rounded-xl bg-[#22242D] hover:bg-[#2A2C38] text-white text-xs font-semibold flex items-center gap-2 border border-[#303340] transition-colors"
               >
                 <Printer className="w-4 h-4 text-[#FFC107]" />
-                <span>Print QR Sticker</span>
+                <span>{t.qr.printBtn}</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => {
                   navigator.clipboard.writeText(window.location.origin);
-                  showToast('Card link copied to clipboard!');
+                  showToast(t.qr.copiedToast);
                 }}
                 className="px-4 py-2.5 rounded-xl bg-[#FFC107] hover:bg-[#FFD54F] text-black text-xs font-bold flex items-center gap-2 transition-all shadow-md active:scale-95"
               >
                 <Copy className="w-4 h-4" />
-                <span>Copy Card Link</span>
+                <span>{t.qr.copyLinkBtn}</span>
               </button>
             </div>
           </div>
@@ -794,12 +819,12 @@ export default function AdminPage() {
       {showAddModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fadeIn">
           <div className="w-full max-w-md bg-[#14151A] border border-[#262832] rounded-3xl p-6 shadow-2xl relative animate-slideUp">
-            <h3 className="text-base font-bold text-white mb-1">Record a Phone / Walk-in Ride</h3>
-            <p className="text-xs text-gray-400 mb-4">Add directly to your daily schedule.</p>
+            <h3 className="text-base font-bold text-white mb-1">{t.addModal.title}</h3>
+            <p className="text-xs text-gray-400 mb-4">{t.addModal.subtitle}</p>
 
             <form onSubmit={handleManualAddBooking} className="space-y-3">
               <div>
-                <label className="block text-xs text-gray-300 mb-1">Customer Name</label>
+                <label className="block text-xs text-gray-300 mb-1">{t.addModal.custName}</label>
                 <input
                   type="text"
                   required
@@ -811,7 +836,7 @@ export default function AdminPage() {
               </div>
 
               <div>
-                <label className="block text-xs text-gray-300 mb-1">Customer Phone</label>
+                <label className="block text-xs text-gray-300 mb-1">{t.addModal.custPhone}</label>
                 <input
                   type="tel"
                   value={newCustPhone}
@@ -823,7 +848,7 @@ export default function AdminPage() {
 
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="block text-xs text-gray-300 mb-1">Pickup Location</label>
+                  <label className="block text-xs text-gray-300 mb-1">{t.addModal.pickup}</label>
                   <input
                     type="text"
                     required
@@ -834,7 +859,7 @@ export default function AdminPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-300 mb-1">Destination</label>
+                  <label className="block text-xs text-gray-300 mb-1">{t.addModal.dest}</label>
                   <input
                     type="text"
                     required
@@ -848,7 +873,7 @@ export default function AdminPage() {
 
               <div className="grid grid-cols-3 gap-2">
                 <div>
-                  <label className="block text-xs text-gray-300 mb-1">Date</label>
+                  <label className="block text-xs text-gray-300 mb-1">{t.addModal.date}</label>
                   <input
                     type="date"
                     value={newDate}
@@ -857,7 +882,7 @@ export default function AdminPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-300 mb-1">Time</label>
+                  <label className="block text-xs text-gray-300 mb-1">{t.addModal.time}</label>
                   <input
                     type="time"
                     value={newTime}
@@ -866,7 +891,7 @@ export default function AdminPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-300 mb-1">Fare (₹)</label>
+                  <label className="block text-xs text-gray-300 mb-1">{t.addModal.fare}</label>
                   <input
                     type="number"
                     value={newFare}
@@ -883,13 +908,13 @@ export default function AdminPage() {
                   onClick={() => setShowAddModal(false)}
                   className="px-4 py-2 rounded-xl bg-[#1E2028] text-gray-300 hover:text-white text-xs font-semibold"
                 >
-                  Cancel
+                  {t.addModal.cancel}
                 </button>
                 <button
                   type="submit"
                   className="px-5 py-2 rounded-xl bg-[#FFC107] text-black text-xs font-bold hover:bg-[#FFD54F]"
                 >
-                  Add Booking
+                  {t.addModal.submit}
                 </button>
               </div>
             </form>
