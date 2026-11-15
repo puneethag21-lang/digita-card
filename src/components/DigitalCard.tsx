@@ -116,7 +116,7 @@ export const DigitalCard: React.FC<DigitalCardProps> = ({
         />
 
         {/* Driver Name & Tagline */}
-        <div className="absolute top-[191px] left-[15px] z-10">
+        <div className="absolute top-[191px] left-[15px] z-20">
           <h1 className="text-[34px] font-bold text-white leading-none">
             {t.driver.name}
           </h1>
@@ -130,7 +130,7 @@ export const DigitalCard: React.FC<DigitalCardProps> = ({
         {/* TVS Duramax Rickshaw Graphic Cutout */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          className="absolute top-[165px] left-[166px] z-0 w-[225px] h-[176px] max-w-none object-cover drop-shadow-2xl"
+          className="absolute top-[165px] left-[166px] z-10 w-[225px] h-[176px] max-w-none object-contain drop-shadow-2xl pointer-events-none"
           src={asset('b8e85.png')}
           alt="Black and yellow TVS auto rickshaw"
         />
